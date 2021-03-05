@@ -1,0 +1,4 @@
+dist/
+manage.**
+package-lock.json
+/node_modules/
