@@ -1,0 +1,29 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: yanan.zhao
+ * @Date: 2021-03-02 14:35:38
+ * @LastEditors: yanan.zhao
+ * @LastEditTime: 2021-03-02 16:52:35
+ */
+
+
+{
+  "presets": [
+    [
+      "@babel/env", {
+        "module": false   // 默认true   支持commonJs
+      }
+    ]
+  ],
+  "comments": false,//不产生注释
+  "plugins" : [
+    "@babel/plugin-transform-runtime"
+     // 按需引入vant组件
+    // ["import", {
+    //   "libraryName": "vant",
+    //   "libraryDirestory": "es",
+    //   "style": true
+    // }]
+  ]
+}
