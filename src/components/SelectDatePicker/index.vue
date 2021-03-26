@@ -1,15 +1,21 @@
+<!--
+ * @Descripttion: 
+ * @version: 
+ * @Author: yanan.zhao
+ * @Date: 2020-05-28 13:54:55
+ * @LastEditors: yanan.zhao
+ * @LastEditTime: 2020-06-30 18:17:40
+--> 
 <template>
     <div class="selected-picker">
-        <van-field :label='label' :required='required' readonly class="for-add-border" input-align='right' :error-message='!errorMessage?"":errorMessage' error-message-align='right'>
-            <template #input > 
-                <span @click="onHandUpPicker">{{value?(value.length>0?value.join(" "):value.length == 0?placeholder: value):placeholder}}</span>
-                <span @click="onHandUpPicker" class="extra-con"></span>
-            </template>
-            <template #button v-if='!readonly && value && value.length>0'> 
-                <van-icon name="close" class="close-icon" @click="handleClear"/>
-            </template>
-        </van-field>
-        <popup-picker :selected='value && value.length>0 ? Number(columns[0].values.indexOf(value[0])): 0' :show="showDialog" :columns="columns" :columnsLength="columnsLength" @onCancel="onCancelPopup" @onConfirm="onConfirmPopup" @onPickerChange="onPickerChange"></popup-picker>
+        <van-cell :title="label" title-class="selected-picker-title" class="for-add-border">
+            <div :class="contentClass" @click="onHandUpPicker">
+                <span>{{value?(value.length>0?value.join(" "):value):placeholder}}</span>
+                <span class="extra-con"></span>
+            </div>
+            <div :class="['van-field__error-message', getTextAlign($attrs['error-message-align'])]" v-show="!!errorMessage">{{errorMessage}}</div>
+        </van-cell>
+        <popup-picker :show="showDialog" :columns="columns" :columnsLength="columnsLength" @onCancel="onCancelPopup" @onConfirm="onConfirmPopup" @onPickerChange="onPickerChange"></popup-picker>
     </div>
 </template>
 
@@ -41,28 +47,18 @@
         @Prop() value!: any  //value，与v-model对应
         @Prop() rule?: any  //校验规则
         @Prop() disabled?: boolean
-        @Prop() readonly?:{
-            type: boolean,
-            default: false
-        }  
-        @Prop() required?:{
-            type: boolean,
-            default: false
-        }
         
+        public contentClass: Array<string> = ["selected-picker-show", this.getTextAlign(this.$attrs["input-align"])]
         public showDialog: boolean = false
         public errorMessage: string = ""
 
         onHandUpPicker(){
+            if(this.disabled) return 
             if(this.$attrs["required-value"] == ""){
                 this.onRequired()
                 return 
             }
-            if(this.readonly || this.columns[0].values.length == 0) return 
             this.showDialog = true
-        }
-        handleClear() {
-            this.onConfirmPopup('', 0)
         }
 
         @Emit("onCancel")
@@ -73,13 +69,15 @@
         @Emit("onConfirm")
         onConfirmPopup(values: any, index: any){
             this.showDialog = false
+            console.log(values, index)
             this.onChange(values)
             this.errorMessage = ""
-            return !values[0] ? '' : values
+            return values
         }
 
         @Emit("input")
         onChange(values: any){
+            this.contentClass.push("has-selected-picker")
             return values
         }
 
@@ -99,6 +97,20 @@
             if(newVal["error-message"] != old["error-message"]){
                 this.errorMessage = newVal["error-message"]
             }
+        }
+
+        getTextAlign(align: string): string{
+            let propTextAlign = align || "left"
+            let classify: any = {
+                left: "text-left",
+                right: "text-right",
+                center: "text-center"
+            }
+            return classify[propTextAlign]
+        }
+
+        mounted(){
+            
         }
 
     }
